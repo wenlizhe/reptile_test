@@ -1,7 +1,7 @@
 import urllib.request
 import urllib.parse
 import http.cookiejar
-import re
+import requests
 import urllib.error
 
 
@@ -50,23 +50,19 @@ def save_cookie():
     login_url = 'http://123.207.71.29/login'
     result = opener.open(login_url, postdata)
     cookie.save(ignore_discard=True, ignore_expires=True)
-    grade_url = 'http://123.207.71.29/results'
-    result = opener.open(grade_url)
     print(result.read())
 
 
 def test():
-    url = "http://www.xxxxx.com/"
-    user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6)"
-    headers = {'User-Agent': user_agent}
-    req = urllib.request.Request(url=url)
-    try:
-        urllib.request.urlopen(req)
-        # content = response.read().decode('utf-8')
-    except urllib.error.HTTPError as e:
-        print(e.code, e.reason)
-    except urllib.error.URLError as e:
-        print(e.reason)
+    data = {}
+    data['word'] = 'Jecvay Notes'
+    url_values = urllib.parse.urlencode(data)
+    url = "http://www.baidu.com/s?"
+    full_url = url + url_values
+    print(full_url)
+    data = urllib.request.urlopen(full_url).read()
+    data = data.decode('UTF-8')
+    print(data)
 
 
 if __name__ == '__main__':
