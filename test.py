@@ -3,6 +3,7 @@ import urllib.parse
 import http.cookiejar
 import requests
 import urllib.error
+import os
 
 
 def urlliblibray():
@@ -54,19 +55,12 @@ def save_cookie():
 
 
 def test():
-    data = {}
-    data['word'] = 'Jecvay Notes'
-    url_values = urllib.parse.urlencode(data)
-    url = "http://www.baidu.com/s?"
-    full_url = url + url_values
-    print(full_url)
-    data = urllib.request.urlopen(full_url).read()
-    data = data.decode('UTF-8')
-    print(data)
+    test_file = open('/Users/wen/Documents/github/reptile_test/cookie.txt', 'w')
+    t = test_file.write('hello world')
+    print(test_file)
 
 
 if __name__ == '__main__':
     # urlliblibray()
     test()
     # save_cookie
-
