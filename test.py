@@ -4,6 +4,7 @@ import http.cookiejar
 import requests
 import urllib.error
 import os
+from bs4 import BeautifulSoup
 
 
 def urlliblibray():
@@ -55,9 +56,9 @@ def save_cookie():
 
 
 def test():
-    test_file = open('/Users/wen/Documents/github/reptile_test/cookie.txt', 'w')
-    t = test_file.write('hello world')
-    print(test_file)
+    html = urllib.request.urlopen("http://pythonscraping.com/pages/page1.html")
+    bsobj = BeautifulSoup(html.read())
+    print(bsobj.title)
 
 
 if __name__ == '__main__':
