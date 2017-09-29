@@ -1,13 +1,19 @@
 import re
+import os
 import datetime
 import random
 # import urllib.error
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+from urllib.request import urlretrieve
 
 
 pages = set()
+allextlinks = set()
+allintlinks = set()
 random.seed(datetime.datetime.now())
+download_diretory = 'download'
+baseurl = 'http://pythonscraping.com'
 
 
 # 获取页面所有内链的列表
@@ -33,6 +39,23 @@ def get_external_links(bsobj, excludeurl):
     return external_links
 
 
+# 收集网站上发现的所有外链列表
+def get_alll_external_links(siteurl):
+    html = urlopen(siteurl)
+    bsobj = BeautifulSoup(html)
+    internal_links = get_internal_links(bsobj, split_address(siteurl)[0])
+    external_links = get_external_links(bsobj, split_address(siteurl)[0])
+    for link in external_links:
+        if link not in allextlinks:
+            allextlinks.add(link)
+            print(link)
+    for link in internal_links:
+        if link not in allextlinks:
+            print("即将获取链接的URL是:"+link)
+            allextlinks.add(link)
+            get_alll_external_links(link)
+
+
 def split_address(adress):
     address_parts = adress.replace('http://', '').split('/')
     return address_parts
@@ -55,9 +78,16 @@ def follow_external_only(startingsite):
     follow_external_only(external_link)
 
 
+def test():
+    html = urlopen(baseurl)
+    bsobj = BeautifulSoup(html, 'html.parser')
+    imagelocation = bsobj.find('a', {'id': 'logo'}).find('img')['src']
+    urlretrieve(imagelocation, './static/logo.jpg')
+
+
 if __name__ == '__main__':
     url = "http://www.pythonscraping.com/pages/page3.html"
-    follow_external_only('http://oreilly.com')
+    # follow_external_only('http://oreilly.com')
     # getlinks("")
-    # test(url)
+    test()
     # print(title)
