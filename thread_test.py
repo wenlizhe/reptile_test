@@ -1,27 +1,55 @@
-import threading
-import time
+class Node(object):
+    def __init__(self,sName):
+        self._lChildren = []
+        self.sName = sName
 
-num = 0
-mutex = threading.Lock()
+    def __repr__(self):
+        return "<Node '{}'>".format(self.sName)
+
+    def append(self,*args,**kwargs):
+        self._lChildren.append(*args, **kwargs)
+
+    def print_all_1(self):
+        print(self)
+        for oChild in self._lChildren:
+            oChild.print_all_1()
+
+    def print_all_2(self):
+        def gen(o):
+            lAll = [o,]
+            while lAll:
+                oNext = lAll.pop(0)
+                lAll.extend(oNext._lChildren)
+                yield oNext
+        for oNode in gen(self):
+            print(oNode) 
 
 
-class MyThread(threading.Thread):
-    def run(self):
-        global num
-        time.sleep(1)
+oRoot = Node("root")
+oChild1 = Node("child1")
+oChild2 = Node("child2")
+oChild3 = Node("child3")
+oChild4 = Node("child4")
+oChild5 = Node("child5")
+oChild6 = Node("child6")
+oChild7 = Node("child7")
+oChild8 = Node("child8")
+oChild9 = Node("child9")
+oChild10 = Node("child10")
 
-        if mutex.acquire(1):
-            num = num+1
-            msg = self.name+' set num to '+str(num)
-            print(msg)
-            mutex.release()
+oRoot.append(oChild1)
+oRoot.append(oChild2)
+oRoot.append(oChild3)
+oChild1.append(oChild4)
+oChild1.append(oChild5)
+oChild2.append(oChild6)
+oChild4.append(oChild7)
+oChild3.append(oChild8)
+oChild3.append(oChild9)
+oChild6.append(oChild10)
 
+# 说明下面代码的输出结果
 
-def test():
-    for i in range(6):
-        t = MyThread()
-        t.start()
+oRoot.print_all_1()
 
-
-if __name__ == '__main__':
-    test()
+oRoot.print_all_2()

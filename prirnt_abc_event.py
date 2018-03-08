@@ -4,19 +4,19 @@ import datetime
 
 
 num = 0
-mutex = threading.Lock()
+# mutex = threading.Lock()
 
 
-class MyThread(threading.Thread):
-    def run(self):
-        global num
-        time.sleep(1)
-
-        if mutex.acquire(1):
-            num = num+1
-            msg = self.name+' set num to '+str(num)
-            print(msg)
-            mutex.release()
+# class MyThread(threading.Thread):
+#     def run(self):
+#         global num
+#         time.sleep(1)
+#
+#         if mutex.acquire(1):
+#             num = num+1
+#             msg = self.name+' set num to '+str(num)
+#             print(msg)
+#             mutex.release()
 
 
 def output_a(event, next_event):
@@ -44,7 +44,6 @@ def output_c(event, next_event):
 
 
 if __name__ == '__main__':
-    print(datetime.datetime.now())
     # for x in range(3):
     a_event = threading.Event()
     b_event = threading.Event()
@@ -59,5 +58,3 @@ if __name__ == '__main__':
     c_thread.start()
 
     a_event.set()
-
-    print(datetime.datetime.now())
