@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from SeleniumTest.common.log import Logger
 
 
 class PythonOrgSearch(unittest.TestCase):
@@ -46,4 +47,7 @@ class PythonOrgSearch(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    lo = Logger()
+    logger = lo.get_logger()
+    logger.debug('wlz')

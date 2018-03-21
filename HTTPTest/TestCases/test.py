@@ -57,14 +57,7 @@ def test_session():
 
 
 def test1():
-    filename = 'test.xlsx'
-    filepath = os.path.join(os.getcwd(), filename)
-    x1 = xlrd.open_workbook(filepath)
-    print('sheet name:%s' % x1.sheet_names())
-    print('sheet number:%s' % x1.nsheets)
-    print('sheet object: %s' % x1.sheets())
-    # print('By_name:', x1.sheet_by_name("test"))
-    # print('By_index:', x1.sheet_by_index(3))
+   pass
     
 
 if __name__ == '__main__':

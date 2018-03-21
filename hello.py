@@ -1,5 +1,6 @@
 import re
 import time
+import socket
 from bs4 import BeautifulSoup
 from urllib import request
 from functools import wraps
@@ -9,7 +10,6 @@ from http import cookiejar
 url = 'http://en.wikipedia.org/wiki/Kevin_Bacon'
 
 
-# 用来检测函数运行时间
 def fn_timer(fn):
     @wraps(fn)
     def function_timer(*args, **kwargs):
@@ -32,13 +32,9 @@ def test1():
 
 def get_cookie():
     filename = 'cookie.txt'
-    # 声明一个CookieJar对象实例来保存cookie
     cookie = cookiejar.MozillaCookieJar(filename)
-    # 利用urllib.request库的HTTPCookieProcessor对象来创建cookie处理器,也就CookieHandler
     handler = request.HTTPCookieProcessor(cookie)
-    # 通过CookieHandler创建opener
     opener = request.build_opener(handler)
-    # 此处的open方法打开网页
     opener.open('https://www.baidu.com')
     cookie.save(ignore_discard=True, ignore_expires=True)
 
@@ -53,6 +49,17 @@ def use_cookie():
     print(response.read().decode('utf-8'))
 
 
+def socket_client():
+    host = '127.0.0.1'
+    port = 7777
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
+    s.send('hello'.encode())
+    data = s.recv(1024)
+    s.close()
+    print('Received:', data)
+
+
 if __name__ == '__main__':
     # test1()
-    use_cookie()
+    socket_client()

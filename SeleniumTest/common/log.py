@@ -1,50 +1,74 @@
-import logging
-from logging.handlers import TimedRotatingFileHandler
-from SeleniumTest.common.config import LOG_PATH
+import calendar
+import logging.handlers
+
+CRITICAL = 50
+ERROR = 40
+WARNING = 30
+INFO = 20
+DEBUG = 10
+NOTSET = 0
 
 
 class Logger(object):
-    def __init__(self, logger_name='framework'):
-        self.logger = logging.getLogger(logger_name)
-        logging.root.setLevel(logging.NOTSET)
-        self.log_file_name = 'test.log'
-        self.backup_count = 5
-        # 日志输出级别
-        self.console_output_level = 'WARNING'
-        self.file_output_level = 'DEBUG'
-        # 日志输出格式
-        self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    def __init__(self, log_file='test_log.txt', level=NOTSET):
+        self.logger = None
+
+        self.levels = {"n": logging.NOTSET,
+                       "d": logging.DEBUG,
+                       "i": logging.INFO,
+                       "w": logging.WARN,
+                       "e": logging.ERROR,
+                       "c": logging.CRITICAL}
+
+        self.log_level = "d"
+        self.log_file = log_file
+        self.log_max_byte = 10 * 1024 * 1024
+        self.log_backup_count = 5
 
     def get_logger(self):
-        """在logger中添加日志句柄并返回，如果logger已有句柄，则直接返回"""
-        if not self.logger.handlers:  # 避免重复日志
-            console_handler = logging.StreamHandler()
-            console_handler.setFormatter(self.formatter)
-            console_handler.setLevel(self.console_output_level)
-            self.logger.addHandler(console_handler)
+        if self.logger is not None:
+            return self.logger
 
-            # 每天重新创建一个日志文件，最多保留backup_count份
-            file_handler = TimedRotatingFileHandler(filename=LOG_PATH + self.log_file_name,
-                                                    when='D',
-                                                    interval=1,
-                                                    backupCount=self.backup_count,
-                                                    delay=True,
-                                                    encoding='utf-8'
-                                                    )
-            file_handler.setFormatter(self.formatter)
-            file_handler.setLevel(self.file_output_level)
-            self.logger.addHandler(file_handler)
+        self.logger = logging.Logger("")
+        log_handler = logging.handlers.RotatingFileHandler(filename=self.log_file,
+                                                           maxBytes=self.log_max_byte,
+                                                           backupCount=self.log_backup_count)
+        log_fmt = logging.Formatter("[%(levelname)s][%(funcName)s][%(asctime)s]%(message)s")
+        log_handler.setFormatter(log_fmt)
+        self.logger.addHandler(log_handler)
+        self.logger.setLevel(self.levels.get(self.log_level))
         return self.logger
 
 
-logger = Logger().get_logger()
-if __name__ == '__main__':
+class Log(object):
+    def log(message, level=NOTSET):
+        """
+        向JusAuto传递日志
+        :param message: 日志消息
+        :param level: 日志级别，取值CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET
+        :return: 无
+        """
+        if level in (CRITICAL, ERROR, WARNING, INFO, DEBUG, NOTSET):
+            obj_log = {'log': self.get_log_message_object(message, level)}
+            print(json.dumps(obj_log))
+            sys.stdout.flush()
+        else:
+            self._value_not_in_range_syntax_error('level')
 
-    logger.info('hello world')
+    def get_log_message_object(self, message, level=NOTSET):
+        return _create_object(message=message, level=level)
 
-    # logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    # logger = logging.getLogger(__name__)
-    # logger.info("Start print log")
-    # logger.debug("Do something")
-    # logger.warning("Something maybe fail.")
-    # logger.info("Finish")
+    def _create_object(self, **kwargs):
+        kwargs['time'] = calendar.timegm(time.gmtime())
+        return kwargs
+
+
+if __name__ == "__main__":
+    lo = Logger()
+    logger = lo.get_logger()
+    logger.debug("this is a debug msg!")
+    logger.info("this is a info msg!")
+    logger.warning("this is a warn msg!")
+    logger.error("this is a error msg!")
+    logger.critical("this is a critical msg!")
